@@ -99,6 +99,7 @@ namespace Assessment2
 
         static void DisplayArray(double[] Array, string[] files, int chosen_file)
         {
+            Console.Clear();
             Console.ResetColor();
             TypeWrite($"{files[chosen_file]} Selected");
             TypeWrite("Display mode:");
@@ -116,20 +117,20 @@ namespace Assessment2
                     double[] tempAssend = Array.OrderBy(c => c).ToArray();
                     for (int i = 0; i < tempAssend.Length; i++)
                     {
-                        Console.WriteLine(tempAssend[i]);
+                        Console.WriteLine($"{(i+1).ToString("#000.##")}|  {tempAssend[i]}");
                     }
                     break;
                 case 2:
                     double[] tempDescend = Array.OrderByDescending(c => c).ToArray();
                     for (int i = 0; i < tempDescend.Length; i++)
                     {
-                        Console.WriteLine(tempDescend[i]);
+                        Console.WriteLine($"{(i + 1).ToString("#000.##")}|  {tempDescend[i]}");
                     }
                     break;
                 case 3:
                     for (int i = 0; i < Array.Length; i++)
                     {
-                        Console.WriteLine(Array[i]);
+                        Console.WriteLine($"{(i+1).ToString("#000.##")}| {Array[i]}");
                     }
                     break;
                 default:
