@@ -8,12 +8,13 @@ namespace Assessment2
 {
     class Program
     {
-        static void TypeWrite(string text)
+        static void TypeWrite(object text)
         {
-            for (int i = 0; i < text.Length; i++)
+            string T = text.ToString();
+            for (int i = 0; i < T.Length; i++)
             {
-                Console.Write(text[i]);
-                System.Threading.Thread.Sleep(30);
+                Console.Write(T[i]);
+                System.Threading.Thread.Sleep(new Random().Next(10, 40));
             }
             Console.Write("\n");
         }
