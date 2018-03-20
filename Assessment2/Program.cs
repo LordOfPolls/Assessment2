@@ -27,6 +27,7 @@ namespace Assessment2
             }
             catch
             {
+                Console.Write("Sleep command error");
                 return;
             }
         }
