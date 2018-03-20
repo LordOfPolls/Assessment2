@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+Name: Assessment2
+Author: Daniel Bearman
+Creation: 18/03/2018
+State: INCOMPLETE
+*/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
