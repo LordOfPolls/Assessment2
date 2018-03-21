@@ -59,17 +59,46 @@ namespace Assessment2
         {
             Console.CursorVisible = false;
             Console.Title = "Boot...";
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
-            string[] files = { "Close_128.txt", "Change_128.txt", "Open_128.txt", "High_128.txt", "Low_128.txt" };
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            string[] files = { "Close_[size].txt", "Change_[size].txt", "Open_[size].txt", "High_[size].txt", "Low_[size].txt", "Merged_[size].txt"};
+            Console.ForegroundColor = ConsoleColor.White;
+            TypeWrite("Choose array size:\n\n1: 128\n2: 256\n3: 1024");
+            int size = int.Parse(Console.ReadLine());
 
+            switch (size)
+            {
+                case 1:
+                    size = 128;
+                    break;
+                case 2:
+                    size = 256;
+                    break;
+                case 3:
+                    size = 1024;
+                    break;
+                default:
+                    //error
+                    return;
+            }
+
+            string element;
+            for(int i = 0; i < files.Length; i++)
+            {
+                element = files[i];
+                element = element.Replace("[size]", Convert.ToString(size));
+                files[i] = element;
+            }
+
+            Console.ForegroundColor = ConsoleColor.Cyan;
             try
             {
                 TypeWrite("Loading arrays...");
-                double[] Close_128 = Load($"Resources/{files[0]}");
-                double[] Change_128 = Load($"Resources/{files[1]}");
-                double[] Open_128 = Load($"Resources/{files[2]}");
-                double[] High_128 = Load($"Resources/{files[3]}");
-                double[] Low_128 = Load($"Resources/{files[4]}");
+                double[] Close = Load($"Resources/{files[0]}");
+                double[] Change = Load($"Resources/{files[1]}");
+                double[] Open = Load($"Resources/{files[2]}");
+                double[] High = Load($"Resources/{files[3]}");
+                double[] Low = Load($"Resources/{files[4]}");
+                double[] Merge = Load($"Resources/{files[5]}");
                 Console.Clear();
             }
             catch
@@ -84,7 +113,7 @@ namespace Assessment2
             Sleep(1000);
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.White;
-            TypeWrite($"Choose your array:\n1: {files[0]}\n2: {files[1]}\n3: {files[2]}\n4: {files[3]}\n5: {files[4]}");
+            TypeWrite($"Choose your array:\n1: {files[0]}\n2: {files[1]}\n3: {files[2]}\n4: {files[3]}\n5: {files[4]}\n6: {files[5]}");
             int chosen_file = Convert.ToInt32(Console.ReadLine()) - 1;
             double[] Choice = Load($"Resources/{files[chosen_file]}");
             Console.Title = $"Reading from {files[chosen_file]}";
