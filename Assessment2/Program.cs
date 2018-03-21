@@ -77,7 +77,11 @@ namespace Assessment2
                     size = 1024;
                     break;
                 default:
-                    //error
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write($"{size} is not a valid choice, please use 1, 2 or 3");
+                    Sleep(3000);
+                    Console.Clear();
+                    Main(new string[0]);
                     return;
             }
 
@@ -115,7 +119,28 @@ namespace Assessment2
             Console.ForegroundColor = ConsoleColor.White;
             TypeWrite($"Choose your array:\n1: {files[0]}\n2: {files[1]}\n3: {files[2]}\n4: {files[3]}\n5: {files[4]}\n6: {files[5]}");
             int chosen_file = Convert.ToInt32(Console.ReadLine()) - 1;
-            double[] Choice = Load($"Resources/{files[chosen_file]}");
+            if (chosen_file > 6)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write($"{chosen_file} is not a valid choice, please use 1 - 6");
+                Sleep(3000);
+                Console.Clear();
+                Main(new string[0]);
+                return;
+
+            }
+            double[] Choice = new double[0]; //because the compiler will throw a tantrum without this
+            try
+            {
+                Choice = Load($"Resources/{files[chosen_file]}");
+            }
+            catch
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write($"Error loading Resources /{ files[chosen_file]}");
+                Sleep(3000);
+                Main(new string[0]);
+            }
             Console.Title = $"Reading from {files[chosen_file]}";
 
             Console.Clear();
