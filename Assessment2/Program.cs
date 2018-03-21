@@ -60,7 +60,7 @@ namespace Assessment2
             Console.CursorVisible = false;
             Console.Title = "Boot...";
             Console.ForegroundColor = ConsoleColor.Cyan;
-            string[] files = { "Close_[size].txt", "Change_[size].txt", "Open_[size].txt", "High_[size].txt", "Low_[size].txt", "Merged_[size].txt"};
+            string[] files = { "Close_[size].txt", "Change_[size].txt", "Open_[size].txt", "High_[size].txt", "Low_[size].txt", "Merged_[size].txt" };
             Console.ForegroundColor = ConsoleColor.White;
             TypeWrite("Choose array size:\n\n1: 128\n2: 256\n3: 1024");
             int size = int.Parse(Console.ReadLine());
@@ -86,7 +86,7 @@ namespace Assessment2
             }
 
             string element;
-            for(int i = 0; i < files.Length; i++)
+            for (int i = 0; i < files.Length; i++)
             {
                 element = files[i];
                 element = element.Replace("[size]", Convert.ToString(size));
@@ -96,6 +96,7 @@ namespace Assessment2
             Console.ForegroundColor = ConsoleColor.Cyan;
             try
             {
+                // I literally never use these again, theyre just here to make sure the script can actually load all of the files
                 TypeWrite("Loading arrays...");
                 double[] Close = Load($"Resources/{files[0]}");
                 double[] Change = Load($"Resources/{files[1]}");
@@ -179,7 +180,7 @@ namespace Assessment2
                     double[] tempAssend = Array.OrderBy(c => c).ToArray();
                     for (int i = 0; i < tempAssend.Length; i++)
                     {
-                        Console.WriteLine($"{(i+1).ToString("#000.##")}|  {tempAssend[i]}");
+                        Console.WriteLine($"{(i + 1).ToString("#000.##")}|  {tempAssend[i]}");
                     }
                     break;
                 case 2:
@@ -192,7 +193,7 @@ namespace Assessment2
                 case 3:
                     for (int i = 0; i < Array.Length; i++)
                     {
-                        Console.WriteLine($"{(i+1).ToString("#000.##")}| {Array[i]}");
+                        Console.WriteLine($"{(i + 1).ToString("#000.##")}| {Array[i]}");
                     }
                     break;
                 default:
@@ -247,17 +248,17 @@ namespace Assessment2
                         TypeWrite("Sucess");
                         try //avoids overflows and underflows when outputting
                         {
-                            TypeWrite($"{searchItem} on line {i + 1}\n\n{i}. {Array[i - 1]}\n{i + 1}. {Array[i]}\n{i + 2}. {Array[i + 1]}");
+                            TypeWrite($"{searchItem} on line {i + 1}\n\n{i}. {Array[i - 1]}\n{i + 1}. {Array[i]} <---\n{i + 2}. {Array[i + 1]}");
                         }
                         catch
                         {
                             try
                             {
-                                TypeWrite($"{searchItem} on line {i + 1}\n\n{i + 1}. {Array[i]}\n{i + 2}. {Array[i + 1]}\n{i + 3}. {Array[i + 2]}");
+                                TypeWrite($"{searchItem} on line {i + 1}\n\n{i + 1}. {Array[i]} <---\n{i + 2}. {Array[i + 1]}\n{i + 3}. {Array[i + 2]}");
                             }
                             catch
                             {
-                                TypeWrite($"{searchItem} on line {i + 1}\n\n{i - 1}. {Array[i - 2]}\n{i}. {Array[i - 1]}\n{i + 1}. {Array[i]}");
+                                TypeWrite($"{searchItem} on line {i + 1}\n\n{i - 1}. {Array[i - 2]}\n{i}. {Array[i - 1]}\n{i + 1}. {Array[i]} <---");
 
                             }
 
@@ -272,6 +273,23 @@ namespace Assessment2
                 Console.ForegroundColor = ConsoleColor.Red;
                 TypeWrite($"Unable to find {searchItem}");
                 TypeWrite($"Nearest value was {Array[Index]} on line {Index + 1}");
+                try //avoids overflows and underflows when outputting
+                {
+                    TypeWrite($"\n{Index}. {Array[Index - 1]}\n{Index + 1}. {Array[Index]} <---\n{Index + 2}. {Array[Index + 1]}");
+                }
+                catch
+                {
+                    try
+                    {
+                        TypeWrite($"\n\n{Index + 1}. {Array[Index]} <---\n{Index + 2}. {Array[Index + 1]}\n{Index + 3}. {Array[Index + 2]}");
+                    }
+                    catch
+                    {
+                        TypeWrite($"\n{Index - 1}. {Array[Index - 2]}\n{Index}. {Array[Index - 1]}\n{Index + 1}. {Array[Index]} <---");
+
+                    }
+                }
+
             }
             TypeWrite("search again? y or n");
             string reply = Console.ReadLine();
@@ -284,8 +302,6 @@ namespace Assessment2
                 SearchArray(Array, files, chosen_file);
             return;
 
-
         }
-
     }
 }
