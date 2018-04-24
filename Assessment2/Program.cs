@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Assessment2
 {
@@ -60,7 +61,7 @@ namespace Assessment2
             Console.CursorVisible = false;
             Console.Title = "Boot...";
             Console.ForegroundColor = ConsoleColor.Cyan;
-            string[] files = { "Close_[size].txt", "Change_[size].txt", "Open_[size].txt", "High_[size].txt", "Low_[size].txt", "Merged_[size].txt" };
+            string[] files = { "Close_[size].txt", "Change_[size].txt", "Open_[size].txt", "High_[size].txt", "Low_[size].txt", "Merge_[size].txt" };
             Console.ForegroundColor = ConsoleColor.White;
             TypeWrite("Choose array size:\n\n1: 128\n2: 256\n3: 1024");
             int size = int.Parse(Console.ReadLine());
@@ -143,7 +144,11 @@ namespace Assessment2
                 Main(new string[0]);
             }
             Console.Title = $"Reading from {files[chosen_file]}";
+            Menu(Choice, files, chosen_file);
+        }
 
+        private static void Menu(double[] Choice, string[] files, int chosen_file)
+        {
             Console.Clear();
             TypeWrite("Choose mode:\n\n1: Display\n2: Search");
             int mode = Convert.ToInt32(Console.ReadLine());
@@ -155,9 +160,14 @@ namespace Assessment2
                 case 2:
                     SearchArray(Choice, files, chosen_file);
                     break;
+                default:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write($"{mode} is not a valid choice, please use 1 or 2");
+                    Sleep(3000);
+                    Console.Clear();
+                    Main(new string[0]);
+                    return;
             }
-
-            Console.ReadKey();
         }
 
         static void DisplayArray(double[] Array, string[] files, int chosen_file)
@@ -203,6 +213,9 @@ namespace Assessment2
                     DisplayArray(Array, files, chosen_file);
                     return;
             }
+            Console.Write("Press any key to return to the main menu");
+            Console.ReadKey();
+            Menu(Array, files, chosen_file);
         }
 
         static void SearchArray(double[] Array, string[] files, int chosen_file)
