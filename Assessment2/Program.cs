@@ -39,6 +39,44 @@ namespace Assessment2
             }
         }
 
+        public static void Quicksort(IComparable[] elements)
+        {
+            int left = 0;
+            int right = elements.Length - 1;
+            int i = left, j = right;
+            IComparable pivot = elements[(left + right) / 2];
+            while (i <= j)
+            {
+                while (elements[i].CompareTo(pivot) < 0)
+                {
+                    i++;
+                }
+                while (elements[j].CompareTo(pivot) > 0)
+                {
+                    j--;
+                }
+                if (i <= j)
+                {
+                    IComparable tmp = elements[i];// Swap
+
+                    elements[i] = elements[j];
+                    elements[j] = tmp;
+                    i++;
+                    j--;
+                }
+            }
+            // Recursive calls
+            if (left < j)
+            {
+                Quicksort(elements);
+            }
+
+            if (i < right)
+            {
+                Quicksort(elements);
+            }
+        }
+
         static double[] Load(string file)
         {
             try
@@ -150,6 +188,7 @@ namespace Assessment2
         private static void Menu(double[] Choice, string[] files, int chosen_file)
         {
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.White;
             TypeWrite("Choose mode:\n\n1: Display\n2: Search");
             int mode = Convert.ToInt32(Console.ReadLine());
             switch (mode)
@@ -190,20 +229,20 @@ namespace Assessment2
                     double[] tempAssend = Array.OrderBy(c => c).ToArray();
                     for (int i = 0; i < tempAssend.Length; i++)
                     {
-                        Console.WriteLine($"{(i + 1).ToString("#000.##")}|  {tempAssend[i]}");
+                        Console.WriteLine($"{(i + 1).ToString("#0000.##")}|  {tempAssend[i]}");
                     }
                     break;
                 case 2:
                     double[] tempDescend = Array.OrderByDescending(c => c).ToArray();
                     for (int i = 0; i < tempDescend.Length; i++)
                     {
-                        Console.WriteLine($"{(i + 1).ToString("#000.##")}|  {tempDescend[i]}");
+                        Console.WriteLine($"{(i + 1).ToString("#0000.##")}|  {tempDescend[i]}");
                     }
                     break;
                 case 3:
                     for (int i = 0; i < Array.Length; i++)
                     {
-                        Console.WriteLine($"{(i + 1).ToString("#000.##")}| {Array[i]}");
+                        Console.WriteLine($"{(i + 1).ToString("#0000.##")}| {Array[i]}");
                     }
                     break;
                 default:
@@ -305,15 +344,12 @@ namespace Assessment2
 
             }
             TypeWrite("search again? y or n");
-            string reply = Console.ReadLine();
+            string reply = Console.ReadLine().ToLower();
             bool restart;
-            if (reply == "y")
-                restart = true;
-            else
-                restart = false;
-            if (restart)
+            if (reply == "y" || reply == "yes" || reply == "yeah")
                 SearchArray(Array, files, chosen_file);
-            return;
+            else
+                Menu(Array, files, chosen_file);
 
         }
     }
