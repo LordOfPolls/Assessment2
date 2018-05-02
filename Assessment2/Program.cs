@@ -2,7 +2,7 @@
 Name: Assessment2
 Author: Daniel Bearman
 Creation: 18/03/2018
-State: INCOMPLETE
+State: COMPLETE
 */
 using System;
 using System.Collections.Generic;
