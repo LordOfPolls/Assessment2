@@ -40,43 +40,51 @@ namespace Assessment2
             }
         }
 
-        public static void Quicksort(IComparable[] elements)
-        {// Woo a quicksort method i never used
-            int left = 0;
-            int right = elements.Length - 1;
-            int i = left, j = right;
-            IComparable pivot = elements[(left + right) / 2];
-            while (i <= j)
+        static void QuickSort(Double[] array, int low, int high)
+        {
+            if (low < high)
             {
-                while (elements[i].CompareTo(pivot) < 0)
+                double pivot = array[high];
+                // index of smaller element
+                int index = (low - 1);
+                for (int j = low; j < high; j++)
                 {
-                    i++;
+                    // If current element is smaller 
+                    // than or equal to pivot
+                    if (array[j] <= pivot)
+                    {
+                        index++;
+                        // swap arr[i] and arr[j]
+                        double temp = array[index];
+                        array[index] = array[j];
+                        array[j] = temp;
+                    }
                 }
-                while (elements[j].CompareTo(pivot) > 0)
-                {
-                    j--;
-                }
-                if (i <= j)
-                {
-                    IComparable tmp = elements[i];// Swap
-
-                    elements[i] = elements[j];
-                    elements[j] = tmp;
-                    i++;
-                    j--;
-                }
-            }
-            // Recursive calls
-            if (left < j)
-            {
-                Quicksort(elements);
-            }
-
-            if (i < right)
-            {
-                Quicksort(elements);
+                // swap arr[i+1] and arr[high] (or pivot)
+                double temp1 = array[index + 1];
+                array[index + 1] = array[high];
+                array[high] = temp1;
+                
+                // Recursively sort elements before
+                // partition and after partition
+                QuickSort(array, low, index);
+                QuickSort(array, index + 1, high);
             }
         }
+
+        static void BubbleSort(Double[] array)
+        {
+            for (int i = 0; i < array.Length - 1; i++)
+                for (int j = 0; j < array.Length - i - 1; j++)
+                    if (array[j] <= array[j + 1])
+                    {
+                        // swap temp and arr[i]
+                        double temp = array[j];
+                        array[j] = array[j + 1];
+                        array[j + 1] = temp;
+                    }
+        }
+
 
         static double[] Load(string file)
         {// Helper function to allow me to load files, and convert them to an array with a single line of code
@@ -100,11 +108,24 @@ namespace Assessment2
             Console.CursorVisible = false; // Gets rid of that annoying blinky line thats in console
             Console.Title = "Boot..."; // Cosmetic thing
             Console.ForegroundColor = ConsoleColor.Cyan; // More cosmetics
-            string[] files = { "Close_[size].txt", "Change_[size].txt", "Open_[size].txt", "High_[size].txt", "Low_[size].txt", "Merge_[size].txt" }; // A fancy array holding all the files names so i never have to type them again
+            string[] files = { "Close_[size].txt", "Change_[size].txt", "Open_[size].txt", "High_[size].txt", "Low_[size].txt" }; // A fancy array holding all the files names so i never have to type them again
             Console.ForegroundColor = ConsoleColor.White; // Oooh more cosmetic stuff
-            TypeWrite("Choose array size:\n\n1: 128\n2: 256\n3: 1024"); // User input junk
-            int size = int.Parse(Console.ReadLine()); // Convert the user input string into an int so i can actually use it properly
 
+            TypeWrite("Choose array size:\n\n1: 128\n2: 256\n3: 1024"); // User input junk
+            int size;
+            try
+            {
+               size = int.Parse(Console.ReadLine()); // Convert the user input string into an int so i can actually use it properly
+            }
+            catch {
+                Console.ForegroundColor = ConsoleColor.Red; // Moar cosmetics
+                Console.Write($"Thats not a valid choice, please use 1, 2 or 3");
+                Sleep(3000);
+                Console.Clear();
+                Main(new string[0]); // Recall the method, theres probably a better way to restart it, but i dont really care, this works
+                return;
+            }
+        
             switch (size) // a switch statement because nested Ifs are ugly in code
             {
                 case 1:
@@ -124,62 +145,95 @@ namespace Assessment2
                     Main(new string[0]); // Recall the method, theres probably a better way to restart it, but i dont really care, this works
                     return;
             }
-
             string element; // The compiler cries if i dont define this outside of a loop ¯\_(ツ)_/¯
-            for (int i = 0; i < files.Length; i++)
-            {
-                element = files[i];
-                element = element.Replace("[size]", Convert.ToString(size)); // Ammend that lazy array of file names from earlier to have the correct names
-                files[i] = element;
+            for (int i = 0; i < files.Length; i++) 
+            {// loop that ammends the filenames from early to have the correct names, saving me creating 15 arrays/options
+                element = files[i]; // get the entry
+                element = element.Replace("[size]", Convert.ToString(size)); // Ammend that lazy array of file names from earlier to have the correct sizes in the names
+                files[i] = element; // update the entry with a new value
             }
-
-            Console.ForegroundColor = ConsoleColor.Cyan; // You guessed it, more cosmetic stuff
-            try
-            {
-                // I literally never use these again, theyre just here to make sure the script can actually load all of the files without errors
-                TypeWrite("Loading arrays..."); // This is here for like half a second, but who cares, it makes the code look sexy
-                double[] Close = Load($"Resources/{files[0]}");
-                double[] Change = Load($"Resources/{files[1]}");
-                double[] Open = Load($"Resources/{files[2]}");
-                double[] High = Load($"Resources/{files[3]}");
-                double[] Low = Load($"Resources/{files[4]}");
-                double[] Merge = Load($"Resources/{files[5]}");
-                Console.Clear();
-            }
-            catch
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("CRITICAL ERROR IN ARRAY LOAD, QUITING");
-                Sleep(10000);
-                Environment.Exit(0);
-            }
-
-            TypeWrite("Arrays Loaded"); // Debug thingy for me, that i ended up liking so its in the finished code
-            Sleep(1000);
+            // Task 6: Id prefer to do this like i did before, with a premerged file, but that wasnt allowed
             Console.Clear();
-            Console.ForegroundColor = ConsoleColor.White; // MOAR COSMETIC STUFF
-            TypeWrite($"Choose your array:\n1: {files[0]}\n2: {files[1]}\n3: {files[2]}\n4: {files[3]}\n5: {files[4]}\n6: {files[5]}");
-            int chosen_file = Convert.ToInt32(Console.ReadLine()) - 1; // Get the users input and make it usable
-            if (chosen_file > 6) // User input vallidation
+            TypeWrite("Merge close and high files?");
+            string mergeQuery = (Console.ReadLine()).ToLower();
+            if (mergeQuery.Contains('y'))
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write($"{chosen_file} is not a valid choice, please use 1 - 6");
-                Sleep(3000);
+                Double[] Array1 = Load($"Resources/{files[0]}"); // Load Close
+                Double[] Array2 = Load($"Resources/{files[3]}"); // Load High
+                Double[] Array = Array1.Concat(Array2).ToArray(); // Merge the two temp arrays
+                try
+                {
+                    Menu(Array, files); // Shove the user into the action's menu
+                }
+                catch
+                {
+                    Console.Clear(); // Clears the screen
+                    TypeWrite("Closing..."); // Tells the user the program is closing
+                    Sleep(1000); // waits
+                    Environment.Exit(0); // Exits
+                }
+            }
+            else if (mergeQuery.Contains('n'))
+            {// Lets the user choose a file
                 Console.Clear();
-                Main(new string[0]);
-                return;
-
+                TypeWrite($"Choose your array:\n1: {files[0]}\n2: {files[1]}\n3: {files[2]}\n4: {files[3]}\n5: {files[4]}\n");
+                int chosen_file;
+                try
+                {
+                     chosen_file = Convert.ToInt32(Console.ReadLine()) - 1; // Get the users input and make it usable
+                }
+                catch
+                {
+                    // Handles the user inputting an invalid option
+                    Console.ForegroundColor = ConsoleColor.Red; // Makes the text red
+                    Console.Write($"Thats is not a valid choice, please use 1 - 6");
+                    Sleep(3000); // Give the user chance to read
+                    Console.Clear(); // Clear the screen
+                    Main(new string[0]); // Restarts the method
+                    return;
+                }
+                if (chosen_file > 6) // User input vallidation
+                {
+                    // Handles the user inputting an invalid option
+                    Console.ForegroundColor = ConsoleColor.Red; // Makes the text red
+                    Console.Write($"{chosen_file} is not a valid choice, please use 1 - 6");
+                    Sleep(3000); // Give the user chance to read
+                    Console.Clear(); // Clear the screen
+                    Main(new string[0]); // Restarts the method
+                    return;
+                }
+                else
+                {
+                    double[] Choice = Load($"Resources/{files[chosen_file]}");
+                    Console.Title = $"Reading from {files[chosen_file]}"; // Cosmetic thingy magingy
+                    try
+                    {
+                        Menu(Choice, files); // Shove the user into the action's menu
+                    }
+                    catch
+                    {
+                        Console.Clear(); // Clears the screen
+                        TypeWrite("Closing..."); // Tells the user the program is closing
+                        Sleep(1000); // waits
+                        Environment.Exit(0); // Exits
+                    }
+                }
             }
             else
-            {
-                double[] Choice = Load($"Resources/{files[chosen_file]}");
-
-                Console.Title = $"Reading from {files[chosen_file]}"; // Cosmetic thingy magingy
-                Menu(Choice, files, chosen_file); // Shove the user into the action's menu
+            {// Handles the user inputting an invalid option
+                Console.ForegroundColor = ConsoleColor.Red; // Makes the text red
+                TypeWrite($"{mergeQuery} is not a valid choice, please use (y)es or (n)o");
+                Sleep(3000);// Give the user chance to read
+                Console.Clear(); // Clear the screen
+                Main(new string[0]); // Restarts the method
+                return;
             }
+
+
         }
 
-        private static void Menu(double[] Choice, string[] files, int chosen_file)
+
+        private static void Menu(double[] Choice, string[] files)
         {// The actions menu that lets the user choose if they want to display or search
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.White; // Another cosmetic
@@ -188,10 +242,10 @@ namespace Assessment2
             switch (mode)
             {
                 case 1:
-                    DisplayArray(Choice, files, chosen_file); // Calls the the method that outputs the data in a nice format
+                    DisplayArray(Choice, files); // Calls the the method that outputs the data in a nice format
                     break;
                 case 2:
-                    SearchArray(Choice, files, chosen_file); // Calls the search method
+                    SearchArray(Choice, files); // Calls the search method
                     break;
                 default: // User input validation
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -203,17 +257,16 @@ namespace Assessment2
             }
         }
 
-        static void DisplayArray(double[] Array, string[] files, int chosen_file)
+        static void DisplayArray(double[] Array, string[] files)
         { // Displays the users input in a sensible way
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.White; // Cosmetic
-            TypeWrite($"{files[chosen_file]} Selected"); // Tells the user what file its reading from
             TypeWrite("Display mode:"); //These are all in seperate lines because my typewrite function wont output /n nicely
             TypeWrite("1: Assending");
             TypeWrite("2: Descending");
             TypeWrite("3: Raw");
             TypeWrite("4: Quicksort Assending");
-            TypeWrite("4: Quicksort Descending");
+            TypeWrite("5: Bubblesort Descending");
 
             int display_mode = Convert.ToInt32(Console.ReadLine());
             Console.Clear();
@@ -241,19 +294,37 @@ namespace Assessment2
                         Console.WriteLine($"{(i + 1).ToString("#0000.##")}| {Array[i]}");
                     }
                     break;
+                case 4:
+                    {
+                        QuickSort(Array, 0, Array.Length - 1);
+                        for (int i = 0; i < Array.Length; i++)
+                        {
+                            Console.WriteLine($"{(i + 1).ToString("#0000.##")}| {Array[i]}");
+                        }
+                        break;
+                    }
+                case 5:
+                    {
+                        BubbleSort(Array);
+                        for (int i = 0; i < Array.Length; i++)
+                        {
+                            Console.WriteLine($"{(i + 1).ToString("#0000.##")}| {Array[i]}");
+                        }
+                        break;
+                    }
                 default: // User input validation
                     Console.ForegroundColor = ConsoleColor.Red;
                     TypeWrite("Thats not a valid choice");
                     Sleep(200);
-                    DisplayArray(Array, files, chosen_file);
+                    DisplayArray(Array, files);
                     return;
             }
             Console.Write("Press any key to return to the main menu"); // Allow the user to return back to the menu
             Console.ReadKey();
-            Menu(Array, files, chosen_file);
+            Menu(Array, files);
         }
 
-        static void SearchArray(double[] Array, string[] files, int chosen_file)
+        static void SearchArray(double[] Array, string[] files)
         {
             Console.Clear();
             Console.ResetColor(); // Cosmetics
@@ -270,7 +341,7 @@ namespace Assessment2
                 Console.ForegroundColor = ConsoleColor.Red;
                 TypeWrite("Invalid search, search must be an int");
                 Sleep(4000);
-                SearchArray(Array, files, chosen_file);
+                SearchArray(Array, files);
                 return;
             }
 
@@ -315,9 +386,7 @@ namespace Assessment2
                             catch
                             {
                                 TypeWrite($"{searchItem} on line {i + 1}\n\n{i - 1}. {Array[i - 2]}\n{i}. {Array[i - 1]}\n{i + 1}. {Array[i]} <---");
-
                             }
-
                         }
                         break;
                     }
@@ -342,18 +411,16 @@ namespace Assessment2
                     catch
                     {
                         TypeWrite($"\n{Index - 1}. {Array[Index - 2]}\n{Index}. {Array[Index - 1]}\n{Index + 1}. {Array[Index]} <---");
-
                     }
                 }
-
             }
             TypeWrite("search again? y or n"); 
             string reply = Console.ReadLine().ToLower();
             bool restart;
             if (reply == "y" || reply == "yes" || reply == "yeah") // allows the user to restart
-                SearchArray(Array, files, chosen_file); //restarts the method with all required data
+                SearchArray(Array, files); //restarts the method with all required data
             else
-                Menu(Array, files, chosen_file); // returns the user to the menu
+                Menu(Array, files); // returns the user to the menu
 
         }
     }
