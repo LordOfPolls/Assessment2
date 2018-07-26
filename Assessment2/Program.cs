@@ -86,6 +86,58 @@ namespace Assessment2
         }
 
 
+        public static int BinarySearch(double[] Array, double searchItem, int min, int max)
+        {// A recursive binary Search method
+            if (min > max)
+            {
+                return -1;
+            }
+            else
+            {
+                int mid = (min + max) / 2;
+                if (searchItem == Array[mid])
+                {
+                    return ++mid;
+                }
+                else if (searchItem < Array[mid])
+                {
+                    return BinarySearch(Array, searchItem, min, mid - 1);
+                }
+                else
+                {
+                    return BinarySearch(Array, searchItem, mid + 1, max);
+                }
+            }
+        }
+
+        public static int CustomSearch(double[] Array, double searchItem)
+        {
+            /*
+             * Ok so basically what this big scary loop does is see how far away the current number is from the desired one
+             * If it finds a number closer to the one it found last time, itll set that as the "bestDistance"
+             * Whatever it finds as the "bestDistance" is set as the "index"
+             * If it finds an exact match, itll output that straight away
+             * If it cant find an exact match, itll output the value with the "bestDistance"
+            */
+            double bestDistance = 0;
+            int Index = -1;
+            double cDistance = 0;
+            for (int i = 0; i < Array.Length; i++)
+            {
+                cDistance = Math.Abs(searchItem - Array[i]); // How far away is this number, from the last best we found
+                if (Index == -1 || cDistance < bestDistance) // Is this value closer to our target than our last best? Or have we not run yet?
+                {
+                    bestDistance = cDistance; // Sets the minimum difference to the current 
+                    Index = i; // The index of the current val
+                    if (bestDistance == 0) // Found the target vakye
+                    {
+                        break;
+                    }
+                }
+            }
+            return Index;
+        }
+
         static double[] Load(string file)
         {// Helper function to allow me to load files, and convert them to an array with a single line of code
             try
@@ -161,10 +213,10 @@ namespace Assessment2
                 Double[] Array1 = Load($"Resources/{files[0]}"); // Load Close
                 Double[] Array2 = Load($"Resources/{files[3]}"); // Load High
                 Double[] Array = Array1.Concat(Array2).ToArray(); // Merge the two temp arrays
-                try
-                {
+                //try
+                //{
                     Menu(Array, files); // Shove the user into the action's menu
-                }
+                /*}
                 catch
                 {
                     Console.Clear(); // Clears the screen
@@ -172,7 +224,7 @@ namespace Assessment2
                     Sleep(1000); // waits
                     Environment.Exit(0); // Exits
                 }
-            }
+            */}
             else if (mergeQuery.Contains('n'))
             {// Lets the user choose a file
                 Console.Clear();
@@ -206,18 +258,18 @@ namespace Assessment2
                 {
                     double[] Choice = Load($"Resources/{files[chosen_file]}");
                     Console.Title = $"Reading from {files[chosen_file]}"; // Cosmetic thingy magingy
-                    try
-                    {
+                    //try
+                    //{
                         Menu(Choice, files); // Shove the user into the action's menu
-                    }
+                    /*}
                     catch
                     {
                         Console.Clear(); // Clears the screen
                         TypeWrite("Closing..."); // Tells the user the program is closing
                         Sleep(1000); // waits
-                        Environment.Exit(0); // Exits
-                    }
-                }
+                       Environment.Exit(0); // Exits
+                    */}
+                //}
             }
             else
             {// Handles the user inputting an invalid option
@@ -324,7 +376,7 @@ namespace Assessment2
             Menu(Array, files);
         }
 
-        static void SearchArray(double[] Array, string[] files)
+        static void SearchArray(double[] Array, string[] files, int choice=0)
         {
             Console.Clear();
             Console.ResetColor(); // Cosmetics
@@ -345,56 +397,27 @@ namespace Assessment2
                 return;
             }
 
-            Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Green; // Reassure the user that its working
-            TypeWrite($"Searching {Array.Length} items"); // Tell them whats going on
-            bool found = false; // helps me out later so i can keep the code cleaner. when this is true, the term has been found
-            Console.Clear();
-            double bestDistance = 0; // The minimum difference
-            int Index = -1; // an index can never be a negative int, so this acts as a way of showing the script ran
-
-            /*
-             * Ok so basically what this big scary loop does is see how far away the current number is from the desired one
-             * If it finds a number closer to the one it found last time, itll set that as the "bestDistance"
-             * Whatever it finds as the "bestDistance" is set as the "index"
-             * If it finds an exact match, itll output that straight away
-             * If it cant find an exact match, itll output the value with the "bestDistance"
-            */
-            for (int i = 0; i < Array.Length; i++)
+            int Index = -1;
+            if (choice == 0) // if restarting method, dont ask again
             {
-                var cDistance = Math.Abs(searchItem - Array[i]); // How far away is this number, from the last best we found
-                if (Index == -1 || cDistance < bestDistance) // Is this value closer to our target than our last best? Or have we not run yet?
-                {
-                    bestDistance = cDistance; // Sets the minimum difference to the current 
-                    Index = i; // The index of the current val
-                    if (bestDistance == 0) // Found the target vakye
-                    {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        found = true;
-                        TypeWrite("Sucess"); 
-
-                        try // avoids overflows and underflows when outputting
-                        { // This scary scary line outputs the result before the target, and after the target, to give a nicer output. completely unnecesary but why not make it look good
-                            TypeWrite($"{searchItem} on line {i + 1}\n\n{i}. {Array[i - 1]}\n{i + 1}. {Array[i]} <---\n{i + 2}. {Array[i + 1]}");
-                        }
-                        catch
-                        {
-                            try // these are here just in case the value found is right at the end or start of the array and the above line would throw an error
-                            {
-                                TypeWrite($"{searchItem} on line {i + 1}\n\n{i + 1}. {Array[i]} <---\n{i + 2}. {Array[i + 1]}\n{i + 3}. {Array[i + 2]}");
-                            }
-                            catch
-                            {
-                                TypeWrite($"{searchItem} on line {i + 1}\n\n{i - 1}. {Array[i - 2]}\n{i}. {Array[i - 1]}\n{i + 1}. {Array[i]} <---");
-                            }
-                        }
-                        break;
-                    }
-                }
+                TypeWrite("Choose search mode:\n1)Binary Search\n2)Custom Search (finds nearest match too)");
+                choice = Convert.ToInt32(Console.ReadLine());
             }
-
-            if (found == false) // it couldnt find an exact match
-            {
+            Console.Clear();
+            TypeWrite($"Searching {Array.Length} items"); // Tell them whats going on
+            Console.ForegroundColor = ConsoleColor.Green; // Reassure the user that its working
+            switch (choice){
+                case 1:
+                    QuickSort(Array, 0, Array.Length - 1); //binary search only works on sorted arrays
+                    Index = Convert.ToInt32(BinarySearch(Array, searchItem, 0, Array.Length-1)) -1;
+                    break;
+                case 2:
+                    Index = CustomSearch(Array, searchItem);
+                    break;
+            }
+            
+            if (Index <= -1 && choice == 2) // it couldnt find an exact match
+            { // this only works with my custom search because i couldnt make it work with a binary search
                 Console.ForegroundColor = ConsoleColor.Red;
                 TypeWrite($"Unable to find {searchItem}"); 
                 TypeWrite($"Nearest value was {Array[Index]} on line {Index + 1}");
@@ -413,12 +436,36 @@ namespace Assessment2
                         TypeWrite($"\n{Index - 1}. {Array[Index - 2]}\n{Index}. {Array[Index - 1]}\n{Index + 1}. {Array[Index]} <---");
                     }
                 }
+            }else if (Index <= -1 && choice == 1)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                TypeWrite($"Unable to find {searchItem}");
+            }
+            else
+            { // Search item was found
+                Console.ForegroundColor = ConsoleColor.Green;
+                TypeWrite("Sucess");
+                try // avoids overflows and underflows when outputting
+                { // This scary scary line outputs the result before the target, and after the target, to give a nicer output. completely unnecesary but why not make it look good
+                    TypeWrite($"{searchItem} on line {Index + 1}\n\n{Index}. {Array[Index - 1]}\n{Index + 1}. {Array[Index]} <---\n{Index + 2}. {Array[Index + 1]}");
+                }
+                catch
+                {
+                    try // these are here just in case the value found is right at the end or start of the array and the above line would throw an error
+                    {
+                        TypeWrite($"{searchItem} on line {Index+ 1}\n\n{Index+ 1}. {Array[Index]} <---\n{Index+ 2}. {Array[Index+ 1]}\n{Index+ 3}. {Array[Index+ 2]}");
+                    }
+                    catch
+                    {
+                        TypeWrite($"{searchItem} on line {Index+ 1}\n\n{Index- 1}. {Array[Index- 2]}\n{Index}. {Array[Index- 1]}\n{Index+ 1}. {Array[Index]} <---");
+                    }
+                }
             }
             TypeWrite("search again? y or n"); 
             string reply = Console.ReadLine().ToLower();
             bool restart;
             if (reply == "y" || reply == "yes" || reply == "yeah") // allows the user to restart
-                SearchArray(Array, files); //restarts the method with all required data
+                SearchArray(Array, files, choice); //restarts the method with all required data
             else
                 Menu(Array, files); // returns the user to the menu
 
