@@ -88,25 +88,25 @@ namespace Assessment2
 
         public static int BinarySearch(double[] Array, double searchItem, int min, int max)
         {// A recursive binary Search method
-            if (min > max)
+            if (min > max) // if there are no values left
             {
-                return -1;
+                return -1; // return something that says there was no result
             }
             else
             {
-                int mid = (min + max) / 2;
-                if (searchItem == Array[mid])
-                {
-                    return ++mid;
+                int mid = (min + max) / 2; // get the middle value
+                if (searchItem == Array[mid]) 
+                {// if result has been found
+                    return mid; //return the ID
                 }
                 else if (searchItem < Array[mid])
-                {
+                {//if search term is lower than the middle value
                     return BinarySearch(Array, searchItem, min, mid - 1);
-                }
+                }   //tell the next loop to only look at the lower half
                 else
-                {
+                {//if search term is higher than the middle value
                     return BinarySearch(Array, searchItem, mid + 1, max);
-                }
+                }   //tell the next loop to only look at the upper half
             }
         }
 
@@ -213,10 +213,10 @@ namespace Assessment2
                 Double[] Array1 = Load($"Resources/{files[0]}"); // Load Close
                 Double[] Array2 = Load($"Resources/{files[3]}"); // Load High
                 Double[] Array = Array1.Concat(Array2).ToArray(); // Merge the two temp arrays
-                //try
-                //{
+                try
+                {
                     Menu(Array, files); // Shove the user into the action's menu
-                /*}
+                }
                 catch
                 {
                     Console.Clear(); // Clears the screen
@@ -224,7 +224,7 @@ namespace Assessment2
                     Sleep(1000); // waits
                     Environment.Exit(0); // Exits
                 }
-            */}
+            }
             else if (mergeQuery.Contains('n'))
             {// Lets the user choose a file
                 Console.Clear();
@@ -258,24 +258,24 @@ namespace Assessment2
                 {
                     double[] Choice = Load($"Resources/{files[chosen_file]}");
                     Console.Title = $"Reading from {files[chosen_file]}"; // Cosmetic thingy magingy
-                    //try
-                    //{
+                    try
+                    {
                         Menu(Choice, files); // Shove the user into the action's menu
-                    /*}
+                    }
                     catch
                     {
                         Console.Clear(); // Clears the screen
                         TypeWrite("Closing..."); // Tells the user the program is closing
                         Sleep(1000); // waits
                        Environment.Exit(0); // Exits
-                    */}
-                //}
+                    }
+                }
             }
             else
             {// Handles the user inputting an invalid option
                 Console.ForegroundColor = ConsoleColor.Red; // Makes the text red
                 TypeWrite($"{mergeQuery} is not a valid choice, please use (y)es or (n)o");
-                Sleep(3000);// Give the user chance to read
+                Sleep(3000);// Give the user chance to read`
                 Console.Clear(); // Clear the screen
                 Main(new string[0]); // Restarts the method
                 return;
@@ -400,6 +400,7 @@ namespace Assessment2
             int Index = -1;
             if (choice == 0) // if restarting method, dont ask again
             {
+                Console.Clear();
                 TypeWrite("Choose search mode:\n1)Binary Search\n2)Custom Search (finds nearest match too)");
                 choice = Convert.ToInt32(Console.ReadLine());
             }
@@ -409,7 +410,7 @@ namespace Assessment2
             switch (choice){
                 case 1:
                     QuickSort(Array, 0, Array.Length - 1); //binary search only works on sorted arrays
-                    Index = Convert.ToInt32(BinarySearch(Array, searchItem, 0, Array.Length-1)) -1;
+                    Index = Convert.ToInt32(BinarySearch(Array, searchItem, 0, Array.Length-1));
                     break;
                 case 2:
                     Index = CustomSearch(Array, searchItem);
@@ -436,10 +437,10 @@ namespace Assessment2
                         TypeWrite($"\n{Index - 1}. {Array[Index - 2]}\n{Index}. {Array[Index - 1]}\n{Index + 1}. {Array[Index]} <---");
                     }
                 }
-            }else if (Index <= -1 && choice == 1)
+            }else if (Index <= -1 && choice == 1) // if no result, and binary search was used
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                TypeWrite($"Unable to find {searchItem}");
+                TypeWrite($"Unable to find {searchItem}"); // tell the user it couldnt find the result
             }
             else
             { // Search item was found
